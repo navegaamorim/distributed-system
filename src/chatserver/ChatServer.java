@@ -1,5 +1,6 @@
 package chatserver;
 
+import util.FileOperations;
 import fileserver.ListSenderThread;
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -1,5 +1,6 @@
 package chatserver;
 
+import util.FileOperations;
 import fileserver.FileReceiverThread;
 import fileserver.ListSenderThread;
 import java.io.BufferedReader;
