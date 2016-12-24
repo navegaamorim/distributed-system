@@ -1,0 +1,30 @@
+//    public static void addUserDirectory(UserDirectory user) {
+//        if (!mDirectories.contains(user)) {
+//            mDirectories.add(user);
+//        }
+//    }
+//
+//    public static ArrayList<UserDirectory> getmDirectories() {
+//        return mDirectories;
+//    }
+    ///////////////////////////////////////FILES
+//    private Client getClientByName(String name) {
+//        Client client = new Client();
+//        for (WorkerThread thread : mThreads) {
+//            if (thread.mClient.getUserName().equals(name)) {
+//                client = thread.mClient;
+//            }
+//        }
+//        return client;
+//    }
+
+//    private File getFileByName(Client client, String name) {
+//        File file = null;
+//        for (File clientfile : client.getmFiles()) {
+//
+//            if (clientfile.getName().equals(name)) {
+//                file = clientfile;
+//            }
+//        }
+//        return file;
+//    }
