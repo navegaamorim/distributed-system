@@ -6,4 +6,5 @@ To run:
 Build all .java files
 
 Execute ChatServer.java
+
 Execute ChatClient.java as many times as needed
