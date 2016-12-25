@@ -5,7 +5,6 @@
  */
 package fileserver;
 
-import chatserver.WorkerThread;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +12,9 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Client;
-import models.UserDirectory;
 
 /**
  *

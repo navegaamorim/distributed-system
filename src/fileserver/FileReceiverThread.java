@@ -25,9 +25,11 @@ import util.FileOperations;
 public class FileReceiverThread extends Thread {
 
     private Client mClient;
+    private int mPort;
 
-    public FileReceiverThread(Client client) {
+    public FileReceiverThread(Client client, int port) {
         this.mClient = client;
+        this.mPort = port;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class FileReceiverThread extends Thread {
         try {
             //Address
             String multiCastAddress = "224.0.0.1";
-            final int multiCastPort = mClient.getSocket().getPort();
+            final int multiCastPort = mPort;
             final int bufferSize = 1024 * 4; //Maximum size of transfer object
 
             //Create Socket

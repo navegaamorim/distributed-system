@@ -83,6 +83,10 @@ public class WorkerThread extends Thread {
                     case DOWNLOAD:
                         executeDownload();
                         break;
+
+                    case MULTIDOWNLOAD:
+                        executeMultiDownload();
+                        break;
                 }
 
                 if (mInputLine.equals("/quit")) {
@@ -133,9 +137,10 @@ public class WorkerThread extends Thread {
             mClient.setOnline(true);
 
             ListSenderThread.addClient(mClient);
-            new FileReceiverThread(mClient).start();
+            new FileReceiverThread(mClient, mClient.getSocket().getPort()).start();
 
             out.println(mProtocol.buildInfo("Bem Vindo " + mClient.getUserName()));
+
         }
     }
 
@@ -213,8 +218,7 @@ public class WorkerThread extends Thread {
         //out.println("/info " + client.toString() + file.getAbsolutePath());
         //new FileSenderThread(client, file).start();
 
-        out.println("/info " + nomeuser + " | " + nomeficheiro + " | " + client.getUserName() + " | " + file.getAbsolutePath());
-
+        //out.println("/info " + nomeuser + " | " + nomeficheiro + " | " + client.getUserName() + " | " + file.getAbsolutePath());
         for (WorkerThread worker : mThreads) {
             if (worker != this && worker.mClient.equals(client)) {
                 PrintWriter outWriter = new PrintWriter(client.getSocket().getOutputStream(), true);
@@ -223,6 +227,23 @@ public class WorkerThread extends Thread {
                 new FileSenderThread(client, file, mClient.getSocket().getPort()).start();
             }
         }
+    }
+
+    private void executeMultiDownload() {
+        int maxIndex = mInputLine.split(" ").length;
+
+        String nomeuser = mInputLine.split(" ")[1];
+        String nomeficheiro = mInputLine.split(" ")[2];
+
+        for (int i = 2; i < maxIndex; ++i) {
+            String nomefile = mInputLine.split(" ")[i];
+            out.println("/info " + nomefile);
+
+        }
+
+        //Client client = getClientByName(nomeuser);
+        //File file = FileOperations.getFileByName(client, nomeficheiro);
+
     }
 
     private Client getClientByName(String name) {
