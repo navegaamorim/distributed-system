@@ -2,6 +2,7 @@ package chatserver;
 
 import util.FileOperations;
 import fileserver.FileReceiverThread;
+import fileserver.FileSenderThread;
 import fileserver.ListSenderThread;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -215,9 +216,11 @@ public class WorkerThread extends Thread {
         out.println("/info " + nomeuser + " | " + nomeficheiro + " | " + client.getUserName() + " | " + file.getAbsolutePath());
 
         for (WorkerThread worker : mThreads) {
-            if (worker.mClient.equals(client)) {
-                PrintWriter outWriter = new PrintWriter(worker.mClient.getSocket().getOutputStream(), true);
+            if (worker != this && worker.mClient.equals(client)) {
+                PrintWriter outWriter = new PrintWriter(client.getSocket().getOutputStream(), true);
                 outWriter.println(mProtocol.buildInfo("Vai enviar o ficheiro"));
+
+                new FileSenderThread(client, file, mClient.getSocket().getPort()).start();
             }
         }
     }

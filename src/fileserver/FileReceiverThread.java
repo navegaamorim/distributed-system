@@ -7,6 +7,7 @@ package fileserver;
 
 import client.ChatClient;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
@@ -15,6 +16,7 @@ import java.net.MulticastSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Client;
+import util.FileOperations;
 
 /**
  *
@@ -43,23 +45,25 @@ public class FileReceiverThread extends Thread {
 
             //Receive data
             while (true) {
-                System.out.println(mClient.getUserName() + "wating for datagram to be received...");
+                System.out.println(mClient.getUserName() + " espera receber um ficheiro na porta " + multiCastPort);
 
                 //Create buffer
                 byte[] buffer = new byte[bufferSize];
                 s.receive(new DatagramPacket(buffer, bufferSize, group, multiCastPort));
-                System.out.println("Datagram received!");
 
                 //Deserialze object
                 ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
                 ObjectInputStream ois = new ObjectInputStream(bais);
                 try {
                     Object readObject = ois.readObject();
-                    if (readObject instanceof String) {
-                        String message = (String) readObject;
-                        System.out.println(":::: " + message);
-                    } else {
-                        //mOut.print("The received object is not of type String!");
+                    if (readObject instanceof File) {
+
+                        File file = (File) readObject;
+
+                        File atualFile = new File(Client.PATH + mClient.getUserName() + "/" + file.getName());
+                        FileOperations.copyFile(file, atualFile);
+
+                        System.out.println(mClient.getUserName() + " recebeu ->" + atualFile.getName());
                     }
                 } catch (Exception e) {
                     //mOut.print("No object could be read from the received UDP datagram.");

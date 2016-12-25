@@ -134,7 +134,7 @@ public class ChatClient implements Runnable {
         users = users.substring(0, users.length() - 1);//remover o ultimo ;
         String mensagem = responseLine.split(":")[maxIndex];
 
-        System.out.println("[group]" + "[" + user + "]" + "[" + users + "] " + "[" + mensagem + "]");
+        System.out.println("[group]" + "[" + user + "]" + "[" + users + "]" + "[" + mensagem + "]");
     }
 
     private void processInfo() {

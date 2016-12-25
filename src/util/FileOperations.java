@@ -11,8 +11,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,23 +53,26 @@ public class FileOperations {
             ObjectInputStream ois = new ObjectInputStream(fis);
             users = (HashMap<String, String>) ois.readObject();
             ois.close();
-
             for (String name : users.keySet()) {
 
-                String key = name.toString();
-                String value = users.get(name).toString();
-                System.out.println(key + " " + value);
-
+                String key = name;
+                String value = users.get(name);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return users;
+    }
 
+    public static void printAllUsers() {
+        HashMap<String, String> users = loadUsers();
+        for (String name : users.keySet()) {
+            String key = name;
+            String value = users.get(name);
+            System.out.println("Nome: " + key + " | " + "Pass: " + value);
+        }
     }
 
     public static boolean createUserFolder(String username) {
@@ -111,6 +116,23 @@ public class FileOperations {
             }
         }
         return file;
+    }
+
+    public static void copyFile(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
     }
 
 }

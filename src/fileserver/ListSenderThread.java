@@ -41,7 +41,7 @@ public class ListSenderThread extends Thread {
                 final int multiCastPort = 52684;
 
                 //Create Socket
-                System.out.println("Create Sender socket on address " + multiCastAddress + " and port " + multiCastPort + ".");
+                //System.out.println("Create Sender socket on address " + multiCastAddress + " and port " + multiCastPort + ".");
                 InetAddress group = InetAddress.getByName(multiCastAddress);
                 MulticastSocket socket = new MulticastSocket(multiCastPort);
                 socket.joinGroup(group);

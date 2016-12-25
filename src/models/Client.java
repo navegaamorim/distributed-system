@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 public class Client {
 
-    private static final String PATH = "/home/navega/NetBeansProjects/SistemasDistribuidos/users/";
+    public static final String PATH = "/home/navega/NetBeansProjects/DistributedSystems/users/";
 
     private String userName;
     private String passwd;
@@ -47,7 +47,6 @@ public class Client {
 //        this.passwd = null;
 //        this.mFiles = files;
 //    }
-
     public String getUserName() {
         return userName;
     }
@@ -89,13 +88,17 @@ public class Client {
     }
 
     public void findUserFiles() {
-        mFiles.clear();
-        File folder = new File(PATH + userName);
-        File[] listOfFiles = folder.listFiles();
-        for (File file : listOfFiles) {
-            if (file.isFile()) {
-                mFiles.add(new UserDirectory(this, file));
+        try {
+            mFiles = new ArrayList<>();
+            File folder = new File(PATH + userName);
+            File[] listOfFiles = folder.listFiles();
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    mFiles.add(new UserDirectory(this, file));
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Problema com a lista de ficheiros");
         }
     }
 

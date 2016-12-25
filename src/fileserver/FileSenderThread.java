@@ -27,44 +27,39 @@ public class FileSenderThread extends Thread {
 
     private Client mClient;
     private File mFile;
+    private int mPortDest;
 
-    public FileSenderThread(Client client, File file) {
+    public FileSenderThread(Client client, File file, int port) {
         mClient = client;
         mFile = file;
+        mPortDest = port;
     }
 
     @Override
     public void run() {
 
-        while (true) {
-            try {
-                //Address
-                String multiCastAddress = "224.0.0.1";
-                final int multiCastPort = mClient.getSocket().getPort();
+        try {
+            //Address
+            String multiCastAddress = "224.0.0.1";
+            final int multiCastPort = mPortDest;
 
-                //Create Socket
-                System.out.println("Create Sender socket on address " + multiCastAddress + " and port " + multiCastPort + ".");
-                InetAddress group = InetAddress.getByName(multiCastAddress);
-                MulticastSocket socket = new MulticastSocket(multiCastPort);
-                socket.joinGroup(group);
+            //Create Socket
+            System.out.println(mClient.getUserName() + " criou FileSenderThread no socket " + multiCastAddress + " e na porta " + multiCastPort + ".");
+            InetAddress group = InetAddress.getByName(multiCastAddress);
+            MulticastSocket socket = new MulticastSocket(multiCastPort);
+            socket.joinGroup(group);
 
-                //Prepare File list
-                String dataFiles = "SENDER-> " + mFile.getName();
+            //Prepare File 
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(mFile);
+            byte[] data = baos.toByteArray();
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(dataFiles);
-                byte[] data = baos.toByteArray();
+            //Send data
+            socket.send(new DatagramPacket(data, data.length, group, multiCastPort));
 
-                //Send data
-                socket.send(new DatagramPacket(data, data.length, group, multiCastPort));
-                Thread.sleep(5000);
-
-            } catch (IOException ex) {
-                Logger.getLogger(ListSenderThread.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ListSenderThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        } catch (IOException ex) {
+            Logger.getLogger(ListSenderThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

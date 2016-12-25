@@ -27,7 +27,7 @@ public class ChatServer {
             System.out.println(e);
         }
 
-        FileOperations.loadUsers();
+        FileOperations.printAllUsers();
 
         while (true) {
             try {
