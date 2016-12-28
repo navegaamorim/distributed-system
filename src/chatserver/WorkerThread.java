@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import models.Client;
 import protocol.CommandProtocol;
 import protocol.EnumProtocol;
+import util.PortManager;
 
 public class WorkerThread extends Thread {
 
@@ -43,7 +44,6 @@ public class WorkerThread extends Thread {
             in = new BufferedReader(new InputStreamReader(mClient.getSocket().getInputStream()));
 
             while ((mInputLine = in.readLine()) != null) {
-
                 mProtocol = new CommandProtocol(mInputLine);
                 mEnumProtocol = mProtocol.getCommand();
 
@@ -84,9 +84,6 @@ public class WorkerThread extends Thread {
                         executeDownload();
                         break;
 
-                    case MULTIDOWNLOAD:
-                        executeMultiDownload();
-                        break;
                 }
 
                 if (mInputLine.equals("/quit")) {
@@ -128,19 +125,21 @@ public class WorkerThread extends Thread {
         String user = mInputLine.split(" ")[1];
         String pass = mInputLine.split(" ")[2];
 
-        if (mClient.isOnline()) {
-            out.println(mProtocol.buildInfo("Ja efetuou login com " + mClient.getUserName()));
+        boolean isOnline = getClientLoginStatus(user);
+
+        if (isOnline) {
+            out.println(mProtocol.buildInfo("Ja tem sessao iniciada noutro local"));
 
         } else if (FileOperations.checkLogin(user, pass)) {
             mClient.setUserName(user);
             mClient.setPasswd(pass);
             mClient.setOnline(true);
+            mClient.setMultiCastPort(PortManager.getMultiCastPort());
 
             ListSenderThread.addClient(mClient);
-            new FileReceiverThread(mClient, mClient.getSocket().getPort()).start();
+            new FileReceiverThread(mClient, mClient.getMultiCastPort()).start();
 
             out.println(mProtocol.buildInfo("Bem Vindo " + mClient.getUserName()));
-
         }
     }
 
@@ -210,21 +209,27 @@ public class WorkerThread extends Thread {
     }
 
     private void executeDownload() throws IOException {
+        int maxIndex = mInputLine.split(" ").length;
         String nomeuser = mInputLine.split(" ")[1];
-        String nomeficheiro = mInputLine.split(" ")[2];
-
         Client client = getClientByName(nomeuser);
-        File file = FileOperations.getFileByName(client, nomeficheiro);
+
+        //File file = FileOperations.getFileByName(client, nomeficheiro);
+        //String nomeficheiro = mInputLine.split(" ")[2];
         //out.println("/info " + client.toString() + file.getAbsolutePath());
         //new FileSenderThread(client, file).start();
-
         //out.println("/info " + nomeuser + " | " + nomeficheiro + " | " + client.getUserName() + " | " + file.getAbsolutePath());
         for (WorkerThread worker : mThreads) {
             if (worker != this && worker.mClient.equals(client)) {
                 PrintWriter outWriter = new PrintWriter(client.getSocket().getOutputStream(), true);
-                outWriter.println(mProtocol.buildInfo("Vai enviar o ficheiro"));
+                outWriter.println(mProtocol.buildInfo("Vai transferir dados para " + mClient.getUserName()));
 
-                new FileSenderThread(client, file, mClient.getSocket().getPort()).start();
+                for (int i = 2; i < maxIndex; ++i) {
+                    String nomefile = mInputLine.split(" ")[i];
+                    File file = FileOperations.getFileByName(client, nomefile);
+                    new FileSenderThread(client, file, mClient.getMultiCastPort()).start();
+                }
+                //out.println("/info " + nomefile);
+                //new FileSenderThread(client, file, mClient.getSocket().getPort()).start();
             }
         }
     }
@@ -243,7 +248,6 @@ public class WorkerThread extends Thread {
 
         //Client client = getClientByName(nomeuser);
         //File file = FileOperations.getFileByName(client, nomeficheiro);
-
     }
 
     private Client getClientByName(String name) {
@@ -254,6 +258,19 @@ public class WorkerThread extends Thread {
             }
         }
         return client;
+    }
+
+    private boolean getClientLoginStatus(String name) {
+        boolean isOnline = false;
+        for (WorkerThread thread : mThreads) {
+
+            if (thread.mClient.getUserName() != null) {
+                if (thread.mClient.getUserName().equals(name)) {
+                    isOnline = thread.mClient.isOnline();
+                }
+            }
+        }
+        return isOnline;
     }
 
 }

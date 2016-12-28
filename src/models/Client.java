@@ -7,9 +7,7 @@ package models;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import chatserver.WorkerThread;
 import java.io.File;
-import java.io.Serializable;
 
 /**
  *
@@ -17,11 +15,12 @@ import java.io.Serializable;
  */
 public class Client {
 
-    public static final String PATH = "/home/navega/NetBeansProjects/DistributedSystems/users/";
+    public static final String PATH = "users/";
 
     private String userName;
     private String passwd;
     private Socket socket;
+    private int multiCastPort;
     private ArrayList<UserDirectory> mFiles = new ArrayList<>();
 
     private boolean state;
@@ -29,18 +28,17 @@ public class Client {
     public Client() {
     }
 
-    public Client(Socket socket) {
-        this.socket = socket;
-        this.userName = null;
-        this.passwd = null;
-    }
-
-    public Client(Socket socket, String name, String passwd) {
-        this.socket = socket;
-        this.userName = name;
-        this.passwd = passwd;
-    }
-
+//    public Client(Socket socket) {
+//        this.socket = socket;
+//        this.userName = null;
+//        this.passwd = null;
+//    }
+//
+//    public Client(Socket socket, String name, String passwd) {
+//        this.socket = socket;
+//        this.userName = name;
+//        this.passwd = passwd;
+//    }
 //    public Client(Socket socket, String name, ArrayList<UserDirectory> files) {
 //        this.socket = socket;
 //        this.userName = name;
@@ -87,9 +85,17 @@ public class Client {
         this.mFiles = mFiles;
     }
 
+    public int getMultiCastPort() {
+        return multiCastPort;
+    }
+
+    public void setMultiCastPort(int multiCastPort) {
+        this.multiCastPort = multiCastPort;
+    }
+
     public void findUserFiles() {
         try {
-            mFiles = new ArrayList<>();
+            mFiles.clear();
             File folder = new File(PATH + userName);
             File[] listOfFiles = folder.listFiles();
             for (File file : listOfFiles) {
@@ -104,7 +110,7 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Client{" + "userName=" + userName + ", passwd=" + passwd + ", socket=" + socket + ", mFiles=" + mFiles + ", state=" + state + '}';
+        return "Client{" + "userName=" + userName + ", passwd=" + passwd + '}';
     }
 
 }

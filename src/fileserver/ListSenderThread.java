@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Client;
 import models.UserDirectory;
+import util.PortManager;
 
 /**
  *
@@ -29,6 +30,8 @@ public class ListSenderThread extends Thread {
     public ListSenderThread() {
         mClients = new ArrayList<>();
         mDirectories = new ArrayList<>();
+        System.out.println("SIZE CONSTRUTOR: " + mClients.size());
+
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ListSenderThread extends Thread {
             try {
                 //Address
                 String multiCastAddress = "224.0.0.1";
-                final int multiCastPort = 52684;
+                final int multiCastPort = PortManager.FILE_LIST_PORT;
 
                 //Create Socket
                 //System.out.println("Create Sender socket on address " + multiCastAddress + " and port " + multiCastPort + ".");
@@ -48,9 +51,9 @@ public class ListSenderThread extends Thread {
 
                 //Prepare File list
                 mDirectories.clear();
-                
                 String dataFiles = "";
                 for (Client client : mClients) {
+                    //System.out.println(client.toString());
                     client.findUserFiles();
                     for (UserDirectory directory : client.getmFiles()) {
                         mDirectories.add(directory);
@@ -60,6 +63,8 @@ public class ListSenderThread extends Thread {
                 for (int i = 0; i < mDirectories.size(); ++i) {
                     dataFiles += mDirectories.get(i).getOwner().getUserName() + " || " + mDirectories.get(i).getFile().getName() + "\n";
                 }
+                
+                System.out.println(dataFiles);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -81,10 +86,12 @@ public class ListSenderThread extends Thread {
 
     public static void addClient(Client client) {
         mClients.add(client);
+        System.out.println("SIZE ADD: " + mClients.size());
     }
 
-    public void removeClient(Client client) {
+    public static void removeClient(Client client) {
         mClients.remove(client);
+        System.out.println("SIZE RM: " + mClients.size());
     }
 
 }

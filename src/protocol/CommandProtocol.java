@@ -61,10 +61,6 @@ public class CommandProtocol {
             return EnumProtocol.DOWNLOAD;
         }
 
-        if (command.startsWith("/multidownload")) {
-            return EnumProtocol.MULTIDOWNLOAD;
-        }
-
         return EnumProtocol.ERROR;
     }
 

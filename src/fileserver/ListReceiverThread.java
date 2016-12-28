@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.PortManager;
 
 /**
  *
@@ -31,7 +32,7 @@ public class ListReceiverThread extends Thread {
         try {
             //Address
             String multiCastAddress = "224.0.0.1";
-            final int multiCastPort = 52684;
+            final int multiCastPort = PortManager.FILE_LIST_PORT;
             final int bufferSize = 1024 * 4; //Maximum size of transfer object
 
             //Create Socket
@@ -40,12 +41,12 @@ public class ListReceiverThread extends Thread {
             s.joinGroup(group);
 
             //Receive data
-            System.out.println("Wating for datagram to be received...");
+            mChat.printMultiCastFileList("A espera de receber a lista...");
 
             //Create buffer
             byte[] buffer = new byte[bufferSize];
             s.receive(new DatagramPacket(buffer, bufferSize, group, multiCastPort));
-            System.out.println("Datagram received!");
+            System.out.println("\nLista de Ficheiros");
 
             //Deserialze object
             ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
@@ -56,7 +57,7 @@ public class ListReceiverThread extends Thread {
                     String message = (String) readObject;
                     mChat.printMultiCastFileList(message);
                 } else {
-                    //mOut.print("The received object is not of type String!");
+                    mChat.printMultiCastFileList("Problemas com os dados recebidos da lista");
                 }
             } catch (Exception e) {
                 //mOut.print("No object could be read from the received UDP datagram.");
