@@ -17,6 +17,10 @@ import protocol.CommandProtocol;
 import protocol.EnumProtocol;
 import util.PortManager;
 
+/**
+ *
+ * @author 8130031
+ */
 public class WorkerThread extends Thread {
 
     private DataInputStream is = null;
@@ -31,7 +35,6 @@ public class WorkerThread extends Thread {
     private CommandProtocol mProtocol;
     private EnumProtocol mEnumProtocol;
 
-    // private static ArrayList<UserDirectory> mDirectories = new ArrayList<>();
     public WorkerThread(Client client, ArrayList<WorkerThread> threads) {
         this.mClient = client;
         this.mThreads = threads;
@@ -82,6 +85,10 @@ public class WorkerThread extends Thread {
 
                     case DOWNLOAD:
                         executeDownload();
+                        break;
+
+                    default:
+                        out.println(mProtocol.buildInfo("/help para ajuda"));
                         break;
 
                 }
@@ -140,10 +147,14 @@ public class WorkerThread extends Thread {
             new FileReceiverThread(mClient, mClient.getMultiCastPort()).start();
 
             out.println(mProtocol.buildInfo("Bem Vindo " + mClient.getUserName()));
+        } else {
+            out.println(mProtocol.buildInfo("Ocorreu um erro"));
         }
+
     }
 
     private void executeLogOut() {
+        ListSenderThread.removeClient(mClient);
         out.println(mProtocol.buildInfo("Ate Ja " + mClient.getUserName()));
         mClient.setOnline(false);
     }
@@ -212,12 +223,6 @@ public class WorkerThread extends Thread {
         int maxIndex = mInputLine.split(" ").length;
         String nomeuser = mInputLine.split(" ")[1];
         Client client = getClientByName(nomeuser);
-
-        //File file = FileOperations.getFileByName(client, nomeficheiro);
-        //String nomeficheiro = mInputLine.split(" ")[2];
-        //out.println("/info " + client.toString() + file.getAbsolutePath());
-        //new FileSenderThread(client, file).start();
-        //out.println("/info " + nomeuser + " | " + nomeficheiro + " | " + client.getUserName() + " | " + file.getAbsolutePath());
         for (WorkerThread worker : mThreads) {
             if (worker != this && worker.mClient.equals(client)) {
                 PrintWriter outWriter = new PrintWriter(client.getSocket().getOutputStream(), true);
@@ -228,26 +233,8 @@ public class WorkerThread extends Thread {
                     File file = FileOperations.getFileByName(client, nomefile);
                     new FileSenderThread(client, file, mClient.getMultiCastPort()).start();
                 }
-                //out.println("/info " + nomefile);
-                //new FileSenderThread(client, file, mClient.getSocket().getPort()).start();
             }
         }
-    }
-
-    private void executeMultiDownload() {
-        int maxIndex = mInputLine.split(" ").length;
-
-        String nomeuser = mInputLine.split(" ")[1];
-        String nomeficheiro = mInputLine.split(" ")[2];
-
-        for (int i = 2; i < maxIndex; ++i) {
-            String nomefile = mInputLine.split(" ")[i];
-            out.println("/info " + nomefile);
-
-        }
-
-        //Client client = getClientByName(nomeuser);
-        //File file = FileOperations.getFileByName(client, nomeficheiro);
     }
 
     private Client getClientByName(String name) {

@@ -13,7 +13,7 @@ import protocol.EnumProtocol;
 
 /**
  *
- * @author navega
+ * @author 8130031
  */
 public class ChatClient implements Runnable {
 
@@ -31,7 +31,7 @@ public class ChatClient implements Runnable {
         String host = "127.0.0.1";
 
         if (args.length < 2) {
-            System.out.println("Usage: java MultiThreadChatClient <host> <portNumber>\n" + "Now using host=" + host + ", portNumber=" + portNumber);
+            System.out.println("Uso: java ChatClient <host> <portNumber>\n" + "A usar host=" + host + ", porto=" + portNumber);
         } else {
             host = args[0];
             portNumber = Integer.valueOf(args[1]).intValue();
@@ -43,9 +43,9 @@ public class ChatClient implements Runnable {
             os = new PrintStream(clientSocket.getOutputStream());
             is = new DataInputStream(clientSocket.getInputStream());
         } catch (UnknownHostException e) {
-            System.err.println("Don't know about host " + host);
+            System.err.println("Host desconhecido: " + host);
         } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to the host " + host);
+            System.err.println("I/O problemas em: " + host);
         }
 
         if (clientSocket != null && os != null && is != null) {
@@ -131,7 +131,7 @@ public class ChatClient implements Runnable {
         for (int i = 1; i < maxIndex; ++i) {
             users += responseLine.split(":")[i] + ";";
         }
-        users = users.substring(0, users.length() - 1);//remover o ultimo ;
+        users = users.substring(0, users.length() - 1);//remover o ultimo ';'
         String mensagem = responseLine.split(":")[maxIndex];
 
         System.out.println("[group]" + "[" + user + "]" + "[" + users + "]" + "[" + mensagem + "]");

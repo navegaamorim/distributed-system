@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package protocol;
 
 import java.util.ArrayList;
 
 /**
  *
- * @author navega
+ * @author 8130031
  */
 public class CommandProtocol {
 
@@ -95,8 +90,6 @@ public class CommandProtocol {
         for (String user : usersName) {
             usertext += user + ":";
         }
-
         return "/group " + clientName + usertext + mensagem;
     }
-
 }

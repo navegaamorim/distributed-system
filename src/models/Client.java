@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
 
 import java.net.Socket;
@@ -11,7 +6,7 @@ import java.io.File;
 
 /**
  *
- * @author navega
+ * @author 8130031
  */
 public class Client {
 
@@ -28,23 +23,6 @@ public class Client {
     public Client() {
     }
 
-//    public Client(Socket socket) {
-//        this.socket = socket;
-//        this.userName = null;
-//        this.passwd = null;
-//    }
-//
-//    public Client(Socket socket, String name, String passwd) {
-//        this.socket = socket;
-//        this.userName = name;
-//        this.passwd = passwd;
-//    }
-//    public Client(Socket socket, String name, ArrayList<UserDirectory> files) {
-//        this.socket = socket;
-//        this.userName = name;
-//        this.passwd = null;
-//        this.mFiles = files;
-//    }
     public String getUserName() {
         return userName;
     }
@@ -96,7 +74,7 @@ public class Client {
     public void findUserFiles() {
         try {
             mFiles.clear();
-            File folder = new File(PATH + userName);
+            File folder = new File(PATH + userName + "/chatSharing");
             File[] listOfFiles = folder.listFiles();
             for (File file : listOfFiles) {
                 if (file.isFile()) {
