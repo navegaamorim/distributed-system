@@ -14,6 +14,7 @@ import util.PortManager;
 /**
  *
  * @author 8130031
+ * @author 8130257
  */
 public class ListReceiverThread extends Thread {
 
